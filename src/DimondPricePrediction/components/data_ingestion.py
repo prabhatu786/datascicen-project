@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import sys
@@ -21,10 +22,10 @@ class DataIngestion:
     def Intiated_data_ingestion(self):
         logging.info("Intiated_data_ingestion")   
         try:
-            data=pd.read_csv(os.path(os.path.join("notebook/data","train.csv")))
+            data=pd.read_csv(Path(os.path.join("notebooks\data","train.csv")))
             logging.info("Data load succefully")
 
-            os.makedirs(os.path.join(self.ingestion_config.raw_data_path),exist_ok=True)
+            os.makedirs(os.path.dirname(os.path.join(self.ingestion_config.raw_data_path)),exist_ok=True)
             data.to_csv(self.ingestion_config.raw_data_path,index=False)
             logging.info("raw data save succefully  in artifacts folder")
 
@@ -36,8 +37,11 @@ class DataIngestion:
             test_data.to_csv(self.ingestion_config.test_data_path,index=False)
             logging.info("Data Ingestion part succefully completed")
 
-
-
+            return(
+                self.ingestion_config.train_data_path,
+                self.ingestion_config.test_data_path
+            )
+        
         except Exception as e:
             logging.info(" Exceptin has been occured during Data Ingestion Stage")
             raise customexception(e,sys)

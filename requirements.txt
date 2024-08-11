@@ -2,4 +2,4 @@ pandas
 scikit-learn
 numpy 
 seaborn
--e .
+-e . # editable mode
