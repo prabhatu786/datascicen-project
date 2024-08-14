@@ -2,33 +2,29 @@ import os
 import sys
 import pandas as pd
 import numpy as np
-from pathlib import Path
 from dataclasses import dataclass
-from sklearn.model_selection import  train_test_split
 from src.DimondPricePrediction.exception import customexception
 from src.DimondPricePrediction.logger import logging
-from sklearn.impute import SimpleImputer ## HAndling Missing Values
-from sklearn.preprocessing import StandardScaler # HAndling Feature Scaling
-from sklearn.preprocessing import OrdinalEncoder # Ordinal Encoding
-## pipelines
-from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OrdinalEncoder,StandardScaler
 from src.DimondPricePrediction.utils.utils import save_object
 
 @dataclass
-class DataTransformConfig:
-    preprocess_obj_file_path=os.path.join("artifacts","preprocessor.pkl")
+class DataTransformationConfig:
+    preprocessor_obj_file_path=os.path.join('artifacts','preprocessor.pkl')
 
-    
-class DataTranformations:
+
+class DataTransformation:
     def __init__(self):
+        self.data_transformation_config=DataTransformationConfig()
 
-        pass 
-
+        
+    
     def get_data_transformation(self):
-         
+        
         try:
-
             logging.info('Data Transformation initiated')
             
             # Define which columns should be ordinal-encoded and which should be scaled
@@ -47,7 +43,9 @@ class DataTranformations:
                 steps=[
                 ('imputer',SimpleImputer(strategy='median')),
                 ('scaler',StandardScaler())
+
                 ]
+
             )
             
             # Categorigal Pipeline
@@ -62,7 +60,8 @@ class DataTranformations:
             
             preprocessor=ColumnTransformer([
             ('num_pipeline',num_pipeline,numerical_cols),
-            ('cat_pipeline',cat_pipeline,categorical_cols) ])
+            ('cat_pipeline',cat_pipeline,categorical_cols)
+            ])
             
             return preprocessor
             
@@ -74,20 +73,19 @@ class DataTranformations:
             logging.info("Exception occured in the initiate_datatransformation")
 
             raise customexception(e,sys)
+            
     
-    
-
-    def initiate_data_tranformation(self,train_path,test_path):
-
+    def initialize_data_transformation(self,train_path,test_path):
         try:
             train_df=pd.read_csv(train_path)
             test_df=pd.read_csv(test_path)
-            logging.info("train_data & Test_data read suceffully")
-            logging.info(f'Train Datafram /n:{train_df.head().to_string()}')
-            logging.info(f'Test Datafram /n:{test_df.head().to_string()}')
-
+            
+            logging.info("read train and test data complete")
+            logging.info(f'Train Dataframe Head : \n{train_df.head().to_string()}')
+            logging.info(f'Test Dataframe Head : \n{test_df.head().to_string()}')
+            
             preprocessing_obj = self.get_data_transformation()
-
+            
             target_column_name = 'price'
             drop_columns = [target_column_name,'id']
             
@@ -119,12 +117,9 @@ class DataTranformations:
                 test_arr
             )
             
-    
-
-
-
-
-
         except Exception as e:
-            logging.info('Exception has occured while train_data & Test_data reading ')
+            logging.info("Exception occured in the initiate_datatransformation")
+
             raise customexception(e,sys)
+            
+    
