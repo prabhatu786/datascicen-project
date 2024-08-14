@@ -13,13 +13,13 @@ class DataIngestionConfig:
     test_data_path:str=os.path.join("artifacts","test.csv")
 
 
-class DataIngestion:
+class  DataIngestion:
     def __init__(self):
         self.ingestion_config =DataIngestionConfig()
         
 
 
-    def Intiated_data_ingestion(self):
+    def intiated_data_ingestion(self):
         logging.info("Intiated_data_ingestion")   
         try:
             data=pd.read_csv(Path(os.path.join("notebooks\data","train.csv")))
